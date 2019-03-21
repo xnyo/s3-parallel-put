@@ -46,6 +46,7 @@ import boto
 from boto.s3.connection import S3Connection
 from boto.s3.acl import CannedACLStrings
 from boto.utils import compute_md5
+from boto.exception import S3ResponseError
 
 
 DONE_RE = re.compile(r'\AINFO:s3-parallel-put\[putter-\d+\]:(?:skipping )?\S+\s+->\s+(\S+)\s*\Z')
@@ -324,6 +325,8 @@ def putter(put, put_queue, stat_queue, options):
             connection, bucket = None, None
         except IOError as exc:
             logger.error('%s -> %s (%s)' % (value.path, key_name, exc))
+        except S3ResponseError as exc:
+            logger.error('S3 Response error (%s) while uploading %s -> %s' % (exc, value.path, key_name))
         put_queue.task_done()
 
 
@@ -423,7 +426,7 @@ def main(argv):
        is_secure=True,
        calling_format = boto.s3.connection.OrdinaryCallingFormat(),
        )
-    
+
     import ssl
     if hasattr(ssl, '_create_unverified_context'):
          ssl._create_default_https_context = ssl._create_unverified_context

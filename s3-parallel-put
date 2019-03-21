@@ -48,7 +48,7 @@ from boto.s3.acl import CannedACLStrings
 from boto.utils import compute_md5
 
 
-DONE_RE = re.compile(r'\AINFO:s3-parallel-put\[putter-\d+\]:\S+\s+->\s+(\S+)\s*\Z')
+DONE_RE = re.compile(r'\AINFO:s3-parallel-put\[putter-\d+\]:(?:skipping )?\S+\s+->\s+(\S+)\s*\Z')
 
 # These content types are amenable to compression
 # WISHLIST more types means more internets
